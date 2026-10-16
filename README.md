@@ -47,34 +47,35 @@
 
 ```mermaid
 flowchart TD
-    Start([🚀 启动程序 & 环境自检]) --> WinInit[聚焦置顶 BOSS直聘 窗口]
-    WinInit --> LoopBatch[遍历当前屏幕可见 12 个候选人槽位]
+    Start(["🚀 启动程序与环境自检"]) --> WinInit["聚焦置顶 BOSS直聘 窗口"]
+    WinInit --> LoopBatch["遍历当前屏幕可见 12 个候选人槽位"]
     
-    LoopBatch --> ClickCandidate[点击候选人槽位 Y = 138 + slot * 74]
-    ClickCandidate --> CheckDup{姓名是否在已访问集合?}
-    CheckDup -- 是 (重叠缓冲项) --> QuickSkip[⚡ 0.05s 快速跳过]
+    LoopBatch --> ClickCandidate["点击候选人槽位 Y = 138 + slot * 74"]
+    ClickCandidate --> CheckDup{"姓名是否已在已访问集合?"}
+    CheckDup -->|是: 重叠缓冲项| QuickSkip["⚡ 0.05s 快速跳过"]
     
-    CheckDup -- 否 --> CheckPriority1{优先级 1: 聊天卡片简历?}
-    CheckPriority1 -- 命中 --> DownloadChat[点击卡片下载按钮] --> HandleSave[处理另存为对话框]
+    CheckDup -->|否| CheckPriority1{"优先级 1: 聊天卡片简历?"}
+    CheckPriority1 -->|命中| DownloadChat["点击卡片下载按钮"]
+    DownloadChat --> HandleSave["处理另存为对话框"]
     
-    CheckPriority1 -- 未命中 --> CheckPriority2{优先级 2: 右上角附件简历激活?}
-    CheckPriority2 -- 命中紫蓝色块 --> OpenModal[点击右上角附件简历 2435, 85]
-    OpenModal --> ClickModalDown[点击弹窗右上角下载件 1580, 59]
-    ClickModalDown --> HandleSaveModal[处理另存为对话框]
-    HandleSaveModal --> CloseModal[按 Esc 或点击 × 关闭预览弹窗]
+    CheckPriority1 -->|未命中| CheckPriority2{"优先级 2: 右上角附件简历激活?"}
+    CheckPriority2 -->|命中紫蓝色块| OpenModal["点击右上角附件简历 2435, 85"]
+    OpenModal --> ClickModalDown["点击弹窗右上角下载件 1580, 59"]
+    ClickModalDown --> HandleSaveModal["处理另存为对话框"]
+    HandleSaveModal --> CloseModal["按 Esc 或点击 × 关闭预览弹窗"]
     
-    CheckPriority2 -- 禁用态 --> SkipNoResume[优先级 3: 无简历直接跳过]
+    CheckPriority2 -->|禁用态/无附件| SkipNoResume["优先级 3: 无简历直接跳过"]
     
-    HandleSave --> RecordVisited[记录候选人至 Visited 集合]
+    HandleSave --> RecordVisited["记录候选人至 Visited 集合"]
     CloseModal --> RecordVisited
     SkipNoResume --> RecordVisited
-    QuickSkip --> CheckNextSlot{本屏 12 项是否处理完?}
+    QuickSkip --> CheckNextSlot{"本屏 12 项是否处理完?"}
     RecordVisited --> CheckNextSlot
     
-    CheckNextSlot -- 否 --> LoopBatch
-    CheckNextSlot -- 是 --> CheckCutoff{OCR 检测列表日期是否超出截止线?}
-    CheckCutoff -- 已超出 (如到达 09-23) --> Finish([🏁 扫描完成并输出汇总清单])
-    CheckCutoff -- 仍在目标区间内 --> SafeScroll[执行防漏检安全滚动 2 次 -600]
+    CheckNextSlot -->|否| LoopBatch
+    CheckNextSlot -->|是| CheckCutoff{"OCR 检测列表日期是否超出截止线?"}
+    CheckCutoff -->|已超出目标日期| Finish(["🏁 扫描完成并输出汇总清单"])
+    CheckCutoff -->|仍在目标区间内| SafeScroll["执行防漏检安全滚动 2 次 -600"]
     SafeScroll --> LoopBatch
 ```
 
@@ -237,5 +238,4 @@ boss_Zhi_Ping/
 本项目采用 **[GNU Affero General Public License v3.0 (AGPLv3)](LICENSE)** 强互惠开源许可证授权。
 
 * **自由使用与修改**：欢迎任何人自由运行、学习和修改代码；
-* **强传染保护**：任何人基于本项目修改、衍生或套壳开发软件（包括通过网络提供 Web/SaaS 服务），**必须无条件以相同开源许可证完全公开所有衍生源代码**；
 * **禁止闭源商业买卖**：严禁未经开源闭源打包作为专有商业软件销售。
